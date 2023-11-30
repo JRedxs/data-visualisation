@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Ajout de useEffect
 import { collection, addDoc } from "firebase/firestore"; 
 import db from './db/firebase';
 import { FileUploader } from 'react-drag-drop-files';
 import Papa from 'papaparse';
-
 const fileTypes = ["CSV"];
 
 function DragDrop() {
@@ -15,16 +14,25 @@ function DragDrop() {
     setFile(file);
   };
 
-  const handleDrop = (files, event) => {
-    setFile(files[0]);
-    parseCSV(files[0]);
+  const handleDrop = (files) => {
+    console.log('files[0]', files)
+    setFile(files);
+    
+    parseCSV(files);
   };
 
+  useEffect(() => {
+    console.log('csvData updated:', file);
+  }, [file]);
+
+
   const parseCSV = (csvFile) => {
+    console.log('Debut du processus parseCSV')
     Papa.parse(csvFile, {
       header: true,
       dynamicTyping: true,
       complete: (result) => {
+        console.log("Résultat du parsage CSV:", result.data);
         setCsvData(result.data);
       },
       error: (error) => {
@@ -33,11 +41,16 @@ function DragDrop() {
     });
   };
 
+
   const sendDataToFirestore = async () => {
+    console.log('csvData Firestore', csvData)
+    if (csvData.length === 0) {
+      console.log('Pas de données à envoyer');
+      return;
+    }
+
     try {
-        // const jsonFile = JSON.parse(csvData)
-        // console.log(jsonFile)
-        console.log(csvData)
+      console.log(csvData);
       const docRef = await addDoc(collection(db, "csv"), { data: csvData });
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
