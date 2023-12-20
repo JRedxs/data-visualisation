@@ -1,52 +1,53 @@
-import ShowData from "../components/ShowData"
-import { useState, useEffect } from "react"
-import { Stack, Flex, Button } from '@chakra-ui/react'
+import ShowData from "../components/ShowData";
+import { useState, useEffect, useRef } from "react";
+import { Flex, Stack } from "@chakra-ui/react";
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import db from "../components/db/firebase";
+import { getDocs, collection } from "firebase/firestore";
 
 const Accueil = () => {
-    const [data, setData] = useState('')
-    const fetchData = async () => {
-        try {
-            const response = await axios.get('http://127.0.0.1:8000/api/listings/', {
-                headers: {
-                }
-            });
-        } catch (error) {
-            if (error.response) {
-            } else if (error.request) {
-            } else {
-            }
-        }
-    };
+    const [todos, setTodos] = useState([]);
+
+    const fetchPost = async () => {
+        await getDocs(collection(db, "/csv"))
+            .then((querySnapshot) => {
+                const newData = querySnapshot.docs
+                    .map((doc) => ({ ...doc.data(), id: doc.id }));
+                setTodos(newData);
+                console.log("Data from Firebase:", newData);
+            })
+    }
+
 
     useEffect(() => {
-        fetchData();
-    })
-
+        fetchPost();
+    }, [])
 
     return (
-        <Flex
-            width="100%"
-            minHeight="100vh"
-            justifyContent="center"
-            backgroundColor="gray.200"
-            flexWrap="wrap"
-            padding={4}
-        >
-            <Stack
-                width={{ base: '100%', sm: '45%', md: '18%' }}
-                height="auto"
-                backgroundColor="white"
-                shadow="lg"
-                borderRadius={10}
-                margin={2}
+        <DndProvider backend={HTML5Backend}>
+            <Flex
+                width="100%"
+                minHeight="20rem"
+                minWidth="100%"
+                justifyContent="center"
+                backgroundColor="gray.200"
+                flexWrap="wrap"
                 padding={4}
             >
-                {/* {data && data.map((data) => (
-                    <ShowData data={data} key={data.id} />
-                ))} */}
-            </Stack>
-        </Flex>
-    )
+                <Stack
+                    height="auto"
+                    backgroundColor="white"
+                    shadow="lg"
+                    borderRadius={10}
+                    margin={2}
+                    padding={4}
+                >
+                    <ShowData />
+                </Stack>
+            </Flex>
+        </DndProvider>
+    );
 }
 
-export default Accueil
+export default Accueil;
