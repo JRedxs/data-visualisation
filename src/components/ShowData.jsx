@@ -2,21 +2,26 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 
 const ShowData = () => {
+    const testData = {
+        x: [1, 2, 3],
+        y: [2, 6, 3],
+    };
+
     return (
         <Plot
             data={[
                 {
-                    x: [1, 2, 3],
-                    y: [2, 6, 3],
+                    x: testData.x,
+                    y: testData.y,
                     type: 'scatter',
                     mode: 'lines+markers',
                     marker: { color: 'red' },
                 },
-                { type: 'bar', x: [1, 2, 3], y: [2, 5, 3] },
+                { type: 'bar', x: testData.x, y: testData.y },
             ]}
-            layout={{ width: 320, height: 240, title: 'A Fancy Plot' }}
+            layout={{ width: "70 rem", height: "50rem", title: 'A Fancy Plot' }}
         />
     );
-}
+};
 
 export default ShowData;
