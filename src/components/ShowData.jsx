@@ -1,5 +1,6 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
+import { useDrag, useDrop } from "react-dnd";
 
 const ShowData = () => {
     const testData = {
