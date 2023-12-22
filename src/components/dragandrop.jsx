@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'; // Ajout de useEffect
+import React, { useState, useEffect } from 'react'; 
 import { collection, addDoc } from "firebase/firestore";
 import db from './db/firebase';
 import { FileUploader } from 'react-drag-drop-files';
 import Papa from 'papaparse';
 import 'firebase/firestore';
+import { useNavigate } from 'react-router-dom'
 import {
   FormControl,
   FormLabel,
@@ -12,19 +13,21 @@ import {
   Card,
   CardBody,
   useToast,
-  CircularProgress,
   Progress
 } from '@chakra-ui/react'
 
 const fileTypes = ["CSV"];
 
 
+
 function DragDrop() {
+  const navigate = useNavigate();
   const toast = useToast()
   const [csvData, setCsvData] = useState([]);
   const [filter, setFilter] = useState("");
   const [progressVisible, setProgressVisible] = useState(false); // État pour gérer la visibilité de la progression
   const [progressValue, setProgressValue] = useState(0);
+
 
 
 
@@ -37,7 +40,6 @@ function DragDrop() {
   };
 
   useEffect(() => {
-    console.log('csvData updated:', csvData);
   }, [csvData]);
 
 
@@ -47,7 +49,6 @@ function DragDrop() {
       header: true,
       dynamicTyping: true,
       complete: (result) => {
-        console.log("Résultat du parsage CSV:", result.data);
         setCsvData(result.data);
       },
       error: (error) => {
@@ -59,17 +60,19 @@ function DragDrop() {
   const CleanDataFirestore = async () => {
     try {
 
-      const cleanedData = removeDuplicates(csvData, filter);
 
+      const cleanDataRemoveBlank = removeBlank(csvData)
+      const cleanedData = removeDuplicates(cleanDataRemoveBlank, filter);
       const isExistKeys = findKeys(csvData)
 
       if (csvData.length === 0) {
-        toast({ title: 'Veuillez charger un fichier', position: 'top', status: 'error' })
+        toast({ title: 'Veuillez charger un fichier', position: 'top', status: 'error', isClosable: true })
       } else if (filter.length === 0) {
-        toast({ title: "Un nom de colonne est obligatoire", position: 'top', status: "error" })
+        toast({ title: "Un nom de colonne est obligatoire", position: 'top', status: "error", isClosable: true })
       } else if (!isExistKeys.includes(filter)) {
-        toast({ title: "Votre nom de colonne n'existe pas", position: 'top', status: "error" })
-      } else {
+        toast({ title: "Votre nom de colonne n'existe pas", position: 'top', status: "error", isClosable: true })
+      }
+      else {
         sendDataToFirestore(cleanedData)
 
       }
@@ -81,10 +84,37 @@ function DragDrop() {
 
   function removeDuplicates(data, key) {
     return data.filter((obj, index, self) =>
-      index === self.findIndex((el) => el[key] === obj[key])
+      index === self.findIndex((el) => el[key] === obj[key]
+      )
     );
+
   }
 
+
+
+
+  function removeBlank(data) {
+    const cleanData = [];
+
+    for (const item of data) {
+      let hasInvalidKey = false;
+      for (const key in item) {
+        if (item[key] === null || item[key] === undefined) {
+          hasInvalidKey = true;
+          break;
+        }
+      }
+      if (!hasInvalidKey) {
+        cleanData.push(item);
+      }
+    }
+
+
+    return cleanData;
+  }
+
+
+  
 
 
   function findKeys(data) {
@@ -119,6 +149,7 @@ function DragDrop() {
       setProgressValue(100);
       setTimeout(() => {
         toast({ title: `Données envoyées & nettoyé sur le champ ${filter}`, position: 'top', status: 'success' });
+        navigate('/Accueil')
         setProgressVisible(false)
       }, 1000);
 
@@ -162,7 +193,7 @@ function DragDrop() {
       </Button>
       <br />
       {progressVisible && (
-        <Progress hasStripe value={progressValue} /> // Afficher la progression avec la valeur actuelle
+        <Progress hasStripe value={progressValue} />
       )}
     </div>
   );
