@@ -45,7 +45,6 @@ const Graph = () => {
                     margin={2}
                     padding={4}
                 >
-                    {/* Pass the fetched data to ShowData */}
                     {lastDocument && <ShowData data={lastDocument} />}
                 </Stack>
             </Flex>

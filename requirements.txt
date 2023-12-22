@@ -3,3 +3,6 @@
     npm install pandas-js 
 # 20 Décembre : 
     npm i @chakra-ui/react @emotion/react @emotion/styled framer-motion
+# 22 Décembre : 
+    npm i react-draggable
+    npm install chart.js

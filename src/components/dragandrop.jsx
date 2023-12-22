@@ -149,7 +149,7 @@ function DragDrop() {
       setProgressValue(100);
       setTimeout(() => {
         toast({ title: `Données envoyées & nettoyé sur le champ ${filter}`, position: 'top', status: 'success' });
-        navigate('/Accueil')
+        navigate('/Graph')
         setProgressVisible(false)
       }, 1000);
 
