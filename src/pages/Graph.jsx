@@ -1,28 +1,30 @@
 import ShowData from "../components/ShowData";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Flex, Stack } from "@chakra-ui/react";
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import db from "../components/db/firebase";
-import { getDocs, collection } from "firebase/firestore";
+import { query, orderBy, limit, doc, getDocs, collection } from "firebase/firestore";
 
 const Graph = () => {
-    const [todos, setTodos] = useState([]);
+    const [lastDocument, setLastDocument] = useState(null);
 
-    const fetchPost = async () => {
-        await getDocs(collection(db, "/csv"))
-            .then((querySnapshot) => {
-                const newData = querySnapshot.docs
-                    .map((doc) => ({ ...doc.data(), id: doc.id }));
-                setTodos(newData);
-                console.log("Data from Firebase:", newData);
-            })
+    const fetchLastDocument = async () => {
+        const q = query(collection(db, "csv"), orderBy("timestamp", "desc"), limit(1));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            const lastDoc = querySnapshot.docs[0].data();
+            setLastDocument(lastDoc);
+            console.log("Latest data from Firebase:", lastDoc);
+        } else {
+            console.log("No documents found!");
+        }
     }
 
-
     useEffect(() => {
-        fetchPost();
-    }, [])
+        fetchLastDocument();
+    }, []);
 
     return (
         <DndProvider backend={HTML5Backend}>
@@ -43,7 +45,8 @@ const Graph = () => {
                     margin={2}
                     padding={4}
                 >
-                    <ShowData />
+                    {/* Pass the fetched data to ShowData */}
+                    {lastDocument && <ShowData data={lastDocument} />}
                 </Stack>
             </Flex>
         </DndProvider>
