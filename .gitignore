@@ -8,8 +8,6 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-package.json
-package-lock.json
 jeux_de_donnes.csv
 dist
 dist-ssr
