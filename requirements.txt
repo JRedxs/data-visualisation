@@ -1,8 +1,8 @@
 # Ajouter ici la date + le nom du package
 # 1 Décembre : 
-    npm install pandas-js 
+    # npm install pandas-js 
 # 20 Décembre : 
-    npm i @chakra-ui/react @emotion/react @emotion/styled framer-motion
+    # npm i @chakra-ui/react @emotion/react @emotion/styled framer-motion
 # 22 Décembre : 
-    npm i react-draggable
-    npm install chart.js
+    # npm i react-draggable
+    # npm install chart.js
