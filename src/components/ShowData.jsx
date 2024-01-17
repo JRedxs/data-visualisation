@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import Draggable from 'react-draggable';
 import Chart from 'chart.js/auto';
-import { Card } from "@chakra-ui/react";
+import { Button, Card, CardHeader } from "@chakra-ui/react";
 import '../styles/ShowData.css'
 
 const ShowData = ({ data }) => {
@@ -9,7 +9,6 @@ const ShowData = ({ data }) => {
 
     const chartRef = useRef(null);
     const radarChartRef = useRef(null);
-    const donutsChartRef = useRef(null)
     const lengthData = Object.keys(data.data);
     const labels = [];
     const latValues = [];
@@ -31,14 +30,22 @@ const ShowData = ({ data }) => {
         console.log('sexe', sexe)
     }
 
+    const downloadData = () => {
+        const jsonData = JSON.stringify(data.data);
+        const blob = new Blob([jsonData], { type: "application/csv" });
+        const url = URL.createObjectURL(blob);
+
+        const downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        downloadLink.download = 'donnees_nettoyes.csv';
+
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    };
+
     useEffect(() => {
 
-        const counts = sexe.reduce((acc, value) => {
-            acc[value] = (acc[value] || 0) + 1;
-            return acc;
-        }, {});
-
-        const donutsData = ['Homme', 'Femme'].map(sex => counts[sex] || 0);
 
         if (chartRef.current) {
             const ctx = chartRef.current.getContext('2d');
@@ -125,6 +132,7 @@ const ShowData = ({ data }) => {
 
     return (
         <>
+
             <Card style={{ position: 'absolute', top: 0, left: 0, zIndex: 1000 }}>
                 <Draggable>
                     <div className='draggable-container'>
@@ -133,12 +141,18 @@ const ShowData = ({ data }) => {
                 </Draggable>
             </Card>
 
-            <Card style={{ position: 'absolute', top: 0, left: 970 }}>
+            <Card style={{ position: 'absolute', top: 0, left: 970, borderColor: 'blue' }}>
                 <Draggable>
                     <div className='draggable-container'>
                         <canvas ref={radarChartRef} className='canvas-dash' />
                     </div>
                 </Draggable>
+            </Card>
+            <Card>
+                <CardHeader>
+
+                    <Button onClick={downloadData} style={{ justifyContent: 'center' }}>Télécharger les données</Button>
+                </CardHeader>
             </Card>
         </>
 

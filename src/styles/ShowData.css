@@ -1,25 +1,15 @@
-/* Style pour le conteneur 'body' */
-.body {
-    background-color: black;
-    /* Autres styles nécessaires pour le conteneur 'body', comme la taille, le padding, etc. */
-}
-
-/* Style pour le conteneur 'draggable-container' */
 .draggable-container {
     position: absolute;
-    /* ou 'fixed' selon le contexte */
     top: 0;
     left: 0;
     z-index: 1000;
-    /* Assurez-vous qu'il est au-dessus des autres éléments */
-    /* Ajoutez d'autres propriétés CSS ici si nécessaire */
 }
 
 .canvas-dash {
     background-color: #CEEAEE;
     border-radius: 5px;
     width: 103vh;
-    /* 80% de la largeur du conteneur parent */
-    height: 50vh;
-    /* 50% de la hauteur de la fenêtre d'affichage */
+    height: 30vh;
+    border-width: 5px;
+    border-color: black;
 }
